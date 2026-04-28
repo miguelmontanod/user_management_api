@@ -90,7 +90,6 @@ The jobs have no `needs:` dependency, so failure in one does **not** block the o
 │   └── test_users.py            # 54 tests across 5 endpoint classes
 ├── utils/
 │   └── data.py                  # build_user_payload, unique_email
-├── sdet_challenge_api.yml       # OpenAPI spec — the source of truth
 ├── BUGS.md                      # Documented divergences from the spec
 ├── pytest.ini
 ├── requirements.txt
