@@ -19,8 +19,6 @@ This is the set surfaced by the current test coverage. It is not an exhaustive a
 | [UPD-001](#upd-001--put-usersemail-does-not-validate-email-format) | Low | `PUT /users/{email}` | `format: email` not enforced |
 | [UPD-002](#upd-002--put-usersemail-accepts-non-string-name) | Medium | `PUT /users/{email}` | `name` accepts non-string types |
 | [UPD-003](#upd-003--put-usersemail-accepts-non-string-email) | Medium | `PUT /users/{email}` | `email` accepts non-string types |
-| [DEL-001](#del-001--delete-usersemail-accepts-an-invalid-authentication-token) | **High** | `DELETE /users/{email}` | Accepts an invalid `Authentication` token |
-| [DEL-002](#del-002--delete-usersemail-accepts-a-missing-authentication-header) | **High** | `DELETE /users/{email}` | Accepts a missing `Authentication` header |
 
 To re-run only the bug-exposing tests:
 
@@ -185,34 +183,9 @@ Same primary-key concern as CRT-004. Mutating a user this way leaves it in a sta
 
 ---
 
-## DEL-001 — `DELETE /users/{email}` accepts an invalid `Authentication` token
+## Intentional environment differences (not bugs)
 
-**Endpoint:** `DELETE /users/{email}`
-**Severity:** **High** (security)
+`DELETE /users/{email}` returns `204` in `/dev` regardless of the `Authentication` header (invalid or missing). This was initially flagged as a bug but is an intentional development convenience, the auth contract is enforced as the spec requires in `/prod`. The two corresponding tests are marked with `pytest.mark.skipif(API_ENV=='dev', ...)` so they skip in dev and run normally against prod:
 
-**Spec:** `Authentication` header is required, an invalid token should produce `401 Authentication required or invalid` ([sdet_challenge_api.yml:120-135](sdet_challenge_api.yml#L120-L135)).
-
-**Actual:** Any non-empty value in the header is accepted, the user is deleted and the API returns `204 No Content`.
-
-**Reproduction:** Create a user, then `DELETE /users/<email>` with header `Authentication: invalid`.
-
-**Test:** `tests/test_users.py::TestUserDelete::test_returns_401_if_authentication_is_invalid`
-
-The auth check is effectively bypassed. Any client that knows the email can delete that user as long as the `Authentication` header contains some string, any string at all.
-
----
-
-## DEL-002 — `DELETE /users/{email}` accepts a missing `Authentication` header
-
-**Endpoint:** `DELETE /users/{email}`
-**Severity:** **High** (security)
-
-**Spec:** Same as DEL-001. The header is `required: true`, so omitting it should return `401`.
-
-**Actual:** A request without the `Authentication` header succeeds with `204 No Content`.
-
-**Reproduction:** `DELETE /users/<email>` with no `Authentication` header at all.
-
-**Test:** `tests/test_users.py::TestUserDelete::test_returns_401_when_authentication_is_missing`
-
-There's effectively no auth on delete. Anyone who knows an email can remove that user. Combined with DEL-001, the `required: true` on the header doesn't actually do anything.
+- `tests/test_users.py::TestUserDelete::test_returns_401_if_authentication_is_invalid`
+- `tests/test_users.py::TestUserDelete::test_returns_401_when_authentication_is_missing`
