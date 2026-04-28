@@ -5,8 +5,8 @@ class UserApiClient:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
 
-    def get_user(self, user_id: int):
-        return requests.get(f"{self.base_url}/users/{user_id}")
+    def get_user(self, email: str):
+        return requests.get(f"{self.base_url}/users/{email}")
 
     def get_users(self):
         return requests.get(f"{self.base_url}/users")
