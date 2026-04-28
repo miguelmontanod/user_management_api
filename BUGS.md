@@ -35,7 +35,7 @@ The `-rx` flag prints a one-line reason for each `XFAIL` in the summary.
 **Endpoint:** `POST /users`
 **Severity:** Medium
 
-**Spec:** Should return `409 Duplicate email` with an `ErrorResponse` body when a user with the same email already exists ([sdet_challenge_api.yml:51-56](sdet_challenge_api.yml#L51-L56)).
+**Spec:** Should return `409 Duplicate email` with an `ErrorResponse` body when a user with the same email already exists.
 
 **Actual:** Returns `500 Internal Server Error`. The duplicate-email path isn't handled, looks like the constraint violation just bubbles up.
 
@@ -52,7 +52,7 @@ Clients can't tell whether the email is taken or the server crashed. 500s also t
 **Endpoint:** `POST /users`
 **Severity:** Low
 
-**Spec:** `email` is `type: string, format: email` ([sdet_challenge_api.yml:155-158](sdet_challenge_api.yml#L155-L158)). Malformed values should be rejected with `400`.
+**Spec:** `email` is `type: string, format: email`. Malformed values should be rejected with `400`.
 
 **Actual:** Strings that aren't valid emails (e.g. `"not-an-email"`) are accepted, the server returns `201` and stores the user.
 
@@ -69,7 +69,7 @@ Anything that needs a deliverable email later (notifications, password resets, e
 **Endpoint:** `POST /users`
 **Severity:** Medium
 
-**Spec:** `name` is `type: string, required: true` ([sdet_challenge_api.yml:152-154](sdet_challenge_api.yml#L152-L154)).
+**Spec:** `name` is `type: string, required: true`.
 
 **Actual:** A numeric `name` (e.g. `123`) is accepted and the user is created.
 
@@ -86,7 +86,7 @@ Anything that treats `name` as a string later (sorting, formatting, calling `.up
 **Endpoint:** `POST /users`
 **Severity:** Medium
 
-**Spec:** `email` is `type: string, format: email` ([sdet_challenge_api.yml:155-158](sdet_challenge_api.yml#L155-L158)).
+**Spec:** `email` is `type: string, format: email`.
 
 **Actual:** A numeric `email` (e.g. `42`) is accepted, the user is created.
 
@@ -103,7 +103,7 @@ Email is the resource's primary key. A non-string PK breaks path lookups (is `/u
 **Endpoint:** `GET /users/{email}`
 **Severity:** Medium
 
-**Spec:** Should return `404 User not found` with an `ErrorResponse` body when the email does not exist ([sdet_challenge_api.yml:77-82](sdet_challenge_api.yml#L77-L82)).
+**Spec:** Should return `404 User not found` with an `ErrorResponse` body when the email does not exist.
 
 **Actual:** A different status / body is returned, not `404`.
 
@@ -120,7 +120,7 @@ Clients can't tell "no such user" apart from any other failure mode, which break
 **Endpoint:** `GET /users/{email}`
 **Severity:** Low
 
-**Spec:** The path parameter `email` is `type: string, format: email` ([sdet_challenge_api.yml:60-66](sdet_challenge_api.yml#L60-L66)). A malformed value should be rejected with `400`.
+**Spec:** The path parameter `email` is `type: string, format: email`. A malformed value should be rejected with `400`.
 
 **Actual:** A clearly malformed value like `not-an-email` is accepted by the routing layer, the request reaches the handler and gets treated as a "missing user" lookup.
 

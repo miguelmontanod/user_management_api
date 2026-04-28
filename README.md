@@ -111,15 +111,7 @@ Tests are grouped into one class per HTTP method:
 
 ## Known bugs
 
-The API has 10 documented places where its behavior diverges from the spec — including two **high-severity** auth-bypass issues on `DELETE /users/{email}`. Full details, severity, and reproduction steps live in [BUGS.md](BUGS.md).
-
-Each bug is covered by a test marked `@pytest.mark.xfail(strict=True)`, so the suite stays green while the failures remain visible as `XFAIL` in the report. If a bug is ever fixed, the test starts passing and the suite fails — a reminder to remove the marker and update [BUGS.md](BUGS.md).
-
-To see only the bug-exposing tests:
-
-```bash
-python -m pytest -rx tests/test_users.py
-```
+Documented in [BUGS.md](BUGS.md): each divergence from the spec, its severity, repro steps, and the test that exposes it.
 
 ## Troubleshooting
 
