@@ -1,0 +1,85 @@
+name: API Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-dev:
+    name: Test (dev)
+    runs-on: ubuntu-latest
+    services:
+      api:
+        image: ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+        ports:
+          - 3000:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..30}; do
+            curl -sf http://localhost:3000/dev/users && break
+            sleep 2
+          done
+
+      - name: Run tests against dev
+        env:
+          API_HOST: http://localhost:3000
+          API_ENV: dev
+        run: pytest
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-dev
+          path: reports/
+
+  test-prod:
+    name: Test (prod)
+    runs-on: ubuntu-latest
+    services:
+      api:
+        image: ghcr.io/danielsilva-loanpro/sdet-interview-challenge:latest
+        ports:
+          - 3000:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..30}; do
+            curl -sf http://localhost:3000/prod/users && break
+            sleep 2
+          done
+
+      - name: Run tests against prod
+        env:
+          API_HOST: http://localhost:3000
+          API_ENV: prod
+        run: pytest
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-prod
+          path: reports/
