@@ -36,7 +36,7 @@ jobs:
         env:
           API_HOST: http://localhost:3000
           API_ENV: dev
-        run: pytest
+        run: pytest --junitxml=reports/junit.xml --html=reports/report.html --self-contained-html
 
       - name: Upload test reports
         if: always()
@@ -75,7 +75,7 @@ jobs:
         env:
           API_HOST: http://localhost:3000
           API_ENV: prod
-        run: pytest
+        run: pytest --junitxml=reports/junit.xml --html=reports/report.html --self-contained-html
 
       - name: Upload test reports
         if: always()
